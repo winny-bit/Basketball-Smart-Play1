@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basketball Smart Play Ultimate - National Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #ff9800;
+  --secondary: #2196f3;
+  --dark-bg: #061a2d;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --success: #4caf50;
+  --error: #f44336;
+}
+
+*{box-sizing:border-box; transition: all 0.3s ease;}
+body{ margin:0; font-family: 'Kanit', sans-serif; background: radial-gradient(circle at center, #0b2d4d 0%, #061a2d 100%); color:#fff; min-height: 100vh; }
+
+/* Navigation & Header */
+header{ background: #020c14; padding:25px; text-align:center; border-bottom: 5px solid var(--primary); }
+header h1 { margin:0; font-size: 28px; text-shadow: 0 0 10px var(--primary); }
+
+nav{ display:flex; justify-content:center; gap:8px; background: rgba(4, 23, 38, 0.95); padding:12px; position:sticky; top:0; z-index: 100; flex-wrap: wrap; backdrop-filter: blur(10px); }
+nav button{ background: transparent; color:#fff; border: 1px solid var(--primary); padding:8px 16px; border-radius:30px; cursor:pointer; font-weight:bold; font-size: 13px; }
+nav button.active, nav button:hover{ background: var(--primary); color:#000; box-shadow: 0 0 15px rgba(255,152,0,0.5); }
+
+/* Layout */
+main{ padding:20px; max-width:1100px; margin:auto; }
+.page{ display:none; animation: fadeIn 0.5s ease-out; }
+.page.active{ display:block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.card{ background: var(--card-bg); padding:25px; border-radius:20px; margin-bottom:20px; border: 1px solid rgba(255,255,255,0.1); }
+h2{ color: var(--primary); font-size: 24px; border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 20px; }
+
+/* History Menu */
+.history-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.history-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--secondary); color: white; padding: 12px; border-radius: 12px; cursor: pointer; }
+.history-btn.active { background: var(--secondary); color: white; font-weight: bold; }
+.history-content { display: none; line-height: 1.8; animation: fadeIn 0.3s; }
+.history-content.active { display: block; }
+
+/* Player Cards */
+.player-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+.player-card-v2 { background: rgba(255,255,255,0.05); border: 2px solid var(--primary); border-radius: 15px; padding: 20px; text-align: center; cursor: pointer; }
+.player-card-v2:hover { transform: translateY(-5px); background: rgba(255,152,0,0.1); }
+
+/* Modal */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+.modal-content { background: #0b2d4d; margin: 10% auto; padding: 30px; border: 2px solid var(--primary); width: 85%; max-width: 500px; border-radius: 20px; text-align: center; position: relative; }
+.close-btn { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: var(--primary); }
+.stat-badge { display: inline-block; background: var(--primary); color: #000; padding: 5px 12px; border-radius: 15px; font-weight: bold; margin: 5px; font-size: 12px; }
+
+/* Quiz */
+.choice-btn { display:block; width:100%; margin:10px 0; background: rgba(255,255,255,0.05); border: 2px solid var(--primary); color:white; padding:15px; border-radius:12px; cursor:pointer; text-align: left; }
+.choice-btn:hover { background: var(--primary); color:black; }
+#timer-bar { width: 100%; height: 10px; background: var(--primary); transition: width 1s linear; }
+
+.summary-card { text-align: center; }
+.grade-text { font-size: 60px; font-weight: bold; color: var(--primary); margin: 20px 0; text-shadow: 0 0 20px rgba(255,152,0,0.5); }
+</style>
+</head>
+<body>
+
+<header><h1>🏀 BASKETBALL SMART PLAY ULTIMATE</h1></header>
+
+<nav>
+  <button data-page="home" class="active">หน้าแรก</button>
+  <button data-page="history">ประวัติ 5 บทเรียน</button>
+  <button data-page="pro">ตำแหน่ง & ไอดอล</button>
+  <button data-page="shooting">เทคนิค B.E.E.F.</button>
+  <button data-page="quiz">เกมทดสอบ</button>
+</nav>
+
+<main>
+  <section id="home" class="page active">
+    <div class="card" style="text-align: center; padding: 50px;">
+      <h2>ยินดีต้อนรับสู่ระบบเรียนรู้อัจฉริยะ</h2>
+      <p>รวบรวมข้อมูลตั้งแต่จุดกำเนิด จนถึงระดับมืออาชีพ</p>
+      <div style="font-size: 80px; margin: 20px;">⛹️‍♂️🏆</div>
+    </div>
+  </section>
+
+  <section id="history" class="page">
+    <div class="card">
+      <h2>📜 คลังประวัติศาสตร์บาสเกตบอล</h2>
+      <div class="history-nav">
+        <button class="history-btn active" onclick="showH(1, event)">1. จุดกำเนิด</button>
+        <button class="history-btn" onclick="showH(2, event)">2. ยุคทอง NBA</button>
+        <button class="history-btn" onclick="showH(3, event)">3. บาสในไทย</button>
+        <button class="history-btn" onclick="showH(4, event)">4. กติกา FIBA</button>
+        <button class="history-btn" onclick="showH(5, event)">5. นวัตกรรม</button>
+      </div>
+
+      <div id="h1" class="history-content active">
+        <h3>บทที่ 1: ตะกร้าลูกพีชและ ดร.เนสมิธ</h3>
+        <p>คิดค้นโดย ดร.เจมส์ เนสมิธ ในปี 1891 แรกเริ่มใช้ตะกร้าผลไม้และลูกฟุตบอลในการเล่น เพื่อหาทางออกให้การออกกำลังกายในร่มช่วงฤดูหนาว</p>
+      </div>
+      <div id="h2" class="history-content">
+        <h3>บทที่ 2: การเติบโตของลีก NBA</h3>
+        <p>NBA ก่อตั้งในปี 1946 และกลายเป็นลีกกีฬาอันดับ 1 ของโลกในยุค 90s จากการมาถึงของ Michael Jordan และ Chicago Bulls</p>
+      </div>
+      <div id="h3" class="history-content">
+        <h3>บทที่ 3: กีฬายัดห่วงในสยาม</h3>
+        <p>เริ่มแพร่หลายในไทยช่วงปี พ.ศ. 2477 มีการจัดทำกติกาภาษาไทยเล่มแรกโดยนายนพคุณ พงษ์สุวรรณ</p>
+      </div>
+      <div id="h4" class="history-content">
+        <h3>บทที่ 4: มาตรฐานกติกา FIBA สากล</h3>
+        <p>ต่างจาก NBA เล็กน้อย เช่น FIBA ใช้เวลา 4 ควอเตอร์ละ 10 นาที และอนุญาตให้ฟาวล์ได้เพียง 5 ครั้งก่อนออกสนาม</p>
+      </div>
+      <div id="h5" class="history-content">
+        <h3>บทที่ 5: สนามและอุปกรณ์ไฮเทค</h3>
+        <p>แป้นบาสปัจจุบันเป็นกระจกนิรภัย Tempered Glass เพื่อความแข็งแรง และมีการใช้ระบบ VAR/Instant Replay ในการตัดสิน</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pro" class="page">
+    <div class="card">
+      <h2>🌟 ตำแหน่งและไอดอล (คลิกเพื่อดูข้อมูล)</h2>
+      
+      <div class="player-grid">
+        <div class="player-card-v2" onclick="showModal('pg')"><b>PG</b><p>Stephen Curry</p></div>
+        <div class="player-card-v2" onclick="showModal('sg')"><b>SG</b><p>Michael Jordan</p></div>
+        <div class="player-card-v2" onclick="showModal('sf')"><b>SF</b><p>LeBron James</p></div>
+        <div class="player-card-v2" onclick="showModal('pf')"><b>PF</b><p>Giannis Antetok.</p></div>
+        <div class="player-card-v2" onclick="showModal('c')"><b>C</b><p>Shaquille O'Neal</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="shooting" class="page">
+    <div class="card">
+      <h2>🎯 หลักการยิง B.E.E.F.</h2>
+      <p><b>B - Balance:</b> จัดระเบียบร่างกายให้สมดุล</p>
+      <p><b>E - Eyes:</b> โฟกัสสายตาที่ห่วงบาส</p>
+      <p><b>E - Elbow:</b> ตั้งศอกให้เป็นมุม 90 องศา</p>
+      <p><b>F - Follow-through:</b> สะบัดข้อมือค้างไว้หลังปล่อยบอล</p>
+    </div>
+  </section>
+
+  <section id="quiz" class="page">
+    <div class="card" id="q-box">
+      <div style="display:flex; justify-content:space-between;">
+        <span>ข้อที่: <span id="q-num">1</span>/10</span>
+        <span>คะแนน: <span id="q-score">0</span></span>
+      </div>
+      <div style="background:#222; height:10px; border-radius:5px; margin:15px 0;"><div id="timer-bar"></div></div>
+      <p id="q-text" style="font-size: 20px; font-weight: bold; text-align: center; min-height: 60px;"></p>
+      <div id="q-choices"></div>
+    </div>
+
+    <div class="card summary-card" id="summary" style="display:none;">
+      <h2>📊 สรุปผลความรู้</h2>
+      <div id="grade" class="grade-text"></div>
+      <p id="final-stats"></p>
+      <button onclick="startQuiz()" class="choice-btn" style="text-align:center;">ลองใหม่อีกครั้ง</button>
+    </div>
+  </section>
+</main>
+
+<div id="playerModal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <h2 id="m-name" style="border:none; justify-content:center;"></h2>
+    <p id="m-pos" style="color:var(--primary); font-weight:bold;"></p>
+    <div id="m-badges"></div>
+    <hr style="border:0.5px solid rgba(255,255,255,0.1); margin:15px 0;">
+    <p id="m-desc" style="text-align:left;"></p>
+  </div>
+</div>
+
+<script>
+// Navigation
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.getElementById(btn.dataset.page).classList.add("active");
+    btn.classList.add("active");
+    if(btn.dataset.page === 'quiz') startQuiz();
+    else clearInterval(timer);
+  };
+});
+
+// History Logic
+function showH(id, e) {
+  document.querySelectorAll(".history-content").forEach(c => c.classList.remove("active"));
+  document.querySelectorAll(".history-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById('h'+id).classList.add("active");
+  e.currentTarget.classList.add("active");
+}
+
+// Modal Data
+const players = {
+  pg: { name: "Stephen Curry", pos: "Point Guard", badges: ["3PT King", "MVP"], desc: "ผู้เปลี่ยนโฉมวงการบาสเกตบอลด้วยการยิง 3 แต้มที่แม่นยำที่สุดในประวัติศาสตร์" },
+  sg: { name: "Michael Jordan", pos: "Shooting Guard", badges: ["GOAT", "6x Champ"], desc: "ตำนานที่ยังมีลมหายใจ ผู้ทำให้ NBA โด่งดังไปทั่วโลกด้วยทักษะการทำแต้มที่เหนือชั้น" },
+  sf: { name: "LeBron James", pos: "Small Forward", badges: ["The King", "40k Pts"], desc: "ผู้เล่นที่ทำแต้มสูงสุดตลอดกาล มีร่างกายที่แข็งแกร่งและสติปัญญาในการคุมเกมที่ยอดเยี่ยม" },
+  pf: { name: "Giannis Antetok.", pos: "Power Forward", badges: ["Greek Freak", "NBA Champ"], desc: "ความยาวของร่างกายและพละกำลังมหาศาล ทำให้เขาหยุดยั้งได้ยากเมื่อบุกเข้าห่วง" },
+  c: { name: "Shaquille O'Neal", pos: "Center", badges: ["Big Diesel", "Dominant"], desc: "เซ็นเตอร์ที่ทรงพลังที่สุดตลอดกาล สามารถทำลายแป้นบาสได้ด้วยพละกำลังการดังก์" }
+};
+
+function showModal(key) {
+  const p = players[key];
+  document.getElementById('m-name').innerText = p.name;
+  document.getElementById('m-pos').innerText = p.pos;
+  document.getElementById('m-desc').innerText = p.desc;
+  const bBox = document.getElementById('m-badges');
+  bBox.innerHTML = "";
+  p.badges.forEach(b => bBox.innerHTML += `<span class="stat-badge">${b}</span>`);
+  document.getElementById('playerModal').style.display = "block";
+}
+
+function closeModal() { document.getElementById('playerModal').style.display = "none"; }
+
+// Quiz Engine
+const qs = [
+  {q:"บาสเกตบอลถูกคิดค้นขึ้นในปี ค.ศ. ใด?", a:"1891", c:["1891","1946","1930","1900"]},
+  {q:"ใครคือผู้คิดค้นกีฬาบาสเกตบอล?", a:"ดร.เจมส์ เนสมิธ", c:["ดร.เจมส์ เนสมิธ","ไมเคิล จอร์แดน","โกบี ไบรอันต์","เลบรอน เจมส์"]},
+  {q:"ตำแหน่ง PG ย่อมาจากอะไร?", a:"Point Guard", c:["Point Guard","Power Guard","Power Goal","Point Goal"]},
+  {q:"หลักการยิง B.E.E.F. ตัว E ตัวแรกหมายถึงอะไร?", a:"Eyes", c:["Eyes","Elbow","Eat","End"]},
+  {q:"ใครทำแต้มรวมสูงสุดในประวัติศาสตร์ NBA?", a:"LeBron James", c:["Michael Jordan","LeBron James","Shaq","Kobe Bryant"]},
+  {q:"กติกา FIBA ผู้เล่นฟาวล์กี่ครั้งจึงต้องออกจากสนาม?", a:"5 ครั้ง", c:["4 ครั้ง","5 ครั้ง","6 ครั้ง","7 ครั้ง"]},
+  {q:"ลีก NBA ก่อตั้งในปี ค.ศ. ใด?", a:"1946", c:["1940","1946","1950","1960"]},
+  {q:"บาสเกตบอลในไทยเริ่มมีกติกาภาษาไทยครั้งแรกปี พ.ศ. ใด?", a:"2477", c:["2477","2490","2500","2510"]},
+  {q:"Stephen Curry โดดเด่นในทักษะใด?", a:"ยิง 3 แต้ม", c:["ยิง 3 แต้ม","บล็อกบอล","รีบาวด์","ดังก์"]},
+  {q:"แป้นบาสปัจจุบันทำจากกระจกชนิดใด?", a:"Tempered Glass", c:["Normal Glass","Tempered Glass","Plastic","Wood"]}
+];
+
+let score = 0, qIdx = 0, timeLeft = 10, timer;
+
+function startQuiz() {
+  score = 0; qIdx = 0;
+  document.getElementById('q-box').style.display = "block";
+  document.getElementById('summary').style.display = "none";
+  loadQ();
+}
+
+function loadQ() {
+  if(qIdx >= 10) return showSum();
+  const q = qs[qIdx];
+  document.getElementById('q-num').innerText = qIdx + 1;
+  document.getElementById('q-score').innerText = score;
+  document.getElementById('q-text').innerText = q.q;
+  const cBox = document.getElementById('q-choices');
+  cBox.innerHTML = "";
+  q.c.forEach(v => {
+    const b = document.createElement("button");
+    b.className = "choice-btn";
+    b.innerText = v;
+    b.onclick = () => {
+      if(v == q.a) score += 10;
+      qIdx++;
+      loadQ();
+    };
+    cBox.appendChild(b);
+  });
+  timeLeft = 10;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timer-bar').style.width = (timeLeft*10) + "%";
+    if(timeLeft <= 0) { qIdx++; loadQ(); }
+  }, 1000);
+}
+
+function showSum() {
+  clearInterval(timer);
+  document.getElementById('q-box').style.display = "none";
+  document.getElementById('summary').style.display = "block";
+  document.getElementById('final-stats').innerText = `คะแนนของคุณคือ ${score}/100`;
+  let g = "ROOKIE 🏀";
+  if(score >= 80) g = "LEGEND 👑";
+  else if(score >= 50) g = "ALL-STAR ⭐";
+  document.getElementById('grade').innerText = g;
+}
+
+window.onclick = (ev) => { if(ev.target.className == 'modal') closeModal(); }
+</script>
+</body>
+</html>
